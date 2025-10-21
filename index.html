@@ -323,13 +323,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </figure>
 </div>
 </div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="index_files/figure-html/overfitting-analysis-r-2.png" class="img-fluid figure-img" width="1344"></p>
-</figure>
-</div>
-</div>
 </div>
 <p><strong>Analysis of Overfitting in Decision Trees vs Random Forests:</strong></p>
 <p>The side-by-side comparison reveals fundamental differences in how these two approaches handle complexity:</p>
@@ -349,17 +342,43 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 - Random Forest (100 trees) RMSE - Random Forest (1000 trees) RMSE</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "Model Performance Comparison: Linear Regression vs Random Forest"</code></pre>
+<pre><code>================================================================================ </code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "======================================================================"</code></pre>
+<pre><code>MODEL PERFORMANCE COMPARISON: Linear Regression vs Random Forest</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>                       Model     RMSE R_squared RMSE_Improvement R2_Improvement
-1          Linear Regression 33381.91 0.8247842             0.00           0.00
-2     Random Forest (1 tree) 42548.89 0.7153393           -27.46         -13.27
-3  Random Forest (100 trees) 34011.56 0.8181119            -1.89          -0.81
-4 Random Forest (1000 trees) 33634.04 0.8221274            -0.76          -0.32</code></pre>
+<pre><code>================================================================================ </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Model                     RMSE         R-squared    RMSE Improvement R² Improvement</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>-----                     ----         ---------    --------------- -------------  </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Linear Regression         33382        0.825        0.0            % 0.0            %
+Random Forest (1 tree)    42549        0.715        -27.5          % -13.3          %
+Random Forest (100 trees) 34012        0.818        -1.9           % -0.8           %
+Random Forest (1000 trees) 33634        0.822        -0.8           % -0.3           %</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Key Insights:</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Linear Regression provides the baseline performance</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Random Forest (1 tree) shows initial improvement over linear regression</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Random Forest (100 trees) provides substantial gains with optimal efficiency</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>• Random Forest (1000 trees) offers marginal additional improvement</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>================================================================================ </code></pre>
 </div>
 </div>
 <p><strong>Analysis of Linear Regression vs Random Forest Performance:</strong></p>

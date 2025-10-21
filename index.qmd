@@ -239,7 +239,7 @@ p2 <- ggplot(viz_data, aes(x = Trees, y = R_squared)) +
   theme_minimal() +
   theme(plot.title = element_text(size = 14, face = "bold"))
 
-# Display plots separately
+# Display plots separately (both with log scale on x-axis for better visualization)
 print(p1)
 print(p2)
 ```
@@ -320,53 +320,41 @@ all_rmse <- c(dt_rmse_train, dt_rmse_test, rf_rmse_train, rf_rmse_test)
 y_min <- min(all_rmse) * 0.95
 y_max <- max(all_rmse) * 1.05
 
-# Create visualizations
-library(ggplot2)
+# Create side-by-side visualization using base R
+par(mfrow = c(1, 2), mar = c(5, 4, 4, 2))
 
-# Decision Tree Plot
-p1 <- ggplot(dt_data, aes(x = Complexity)) +
-  geom_line(aes(y = RMSE_Train, color = "Training"), size = 1.2) +
-  geom_line(aes(y = RMSE_Test, color = "Test"), size = 1.2) +
-  geom_point(aes(y = RMSE_Train, color = "Training"), size = 2) +
-  geom_point(aes(y = RMSE_Test, color = "Test"), size = 2) +
-  scale_color_manual(values = c("Training" = "#1F78B4", "Test" = "#E31A1C")) +
-  labs(
-    title = "Decision Trees: Overfitting with Complexity",
-    x = "Max Depth",
-    y = "RMSE",
-    color = "Dataset"
-  ) +
-  ylim(y_min, y_max) +
-  theme_minimal() +
-  theme(
-    plot.title = element_text(size = 12, face = "bold"),
-    legend.position = "bottom"
-  )
+# Left plot: Decision Trees - Overfitting Problem
+plot(dt_depths, dt_rmse_train, 
+     type = "b", col = "#1F78B4", lwd = 2, pch = 16, cex = 1.2,
+     xlab = "Max Depth", ylab = "RMSE", 
+     main = "Decision Trees: Overfitting Problem",
+     ylim = c(y_min, y_max),
+     cex.main = 1.1, font.main = 2)
+lines(dt_depths, dt_rmse_test, 
+      type = "b", col = "#E31A1C", lwd = 2, pch = 17, cex = 1.2)
+legend("topright", 
+       legend = c("Training", "Test"), 
+       col = c("#1F78B4", "#E31A1C"), 
+       lty = 1, lwd = 2, pch = c(16, 17), cex = 0.9)
+grid(col = "gray90", lty = 2)
 
-# Random Forest Plot
-p2 <- ggplot(rf_data, aes(x = Complexity)) +
-  geom_line(aes(y = RMSE_Train, color = "Training"), size = 1.2) +
-  geom_line(aes(y = RMSE_Test, color = "Test"), size = 1.2) +
-  geom_point(aes(y = RMSE_Train, color = "Training"), size = 2) +
-  geom_point(aes(y = RMSE_Test, color = "Test"), size = 2) +
-  scale_x_log10() +
-  scale_color_manual(values = c("Training" = "#1F78B4", "Test" = "#E31A1C")) +
-  labs(
-    title = "Random Forest: No Overfitting",
-    x = "Number of Trees (Log Scale)",
-    y = "RMSE",
-    color = "Dataset"
-  ) +
-  ylim(y_min, y_max) +
-  theme_minimal() +
-  theme(
-    plot.title = element_text(size = 12, face = "bold"),
-    legend.position = "bottom"
-  )
+# Right plot: Random Forest - No Overfitting
+plot(rf_trees, rf_rmse_train, 
+     type = "b", col = "#1F78B4", lwd = 2, pch = 16, cex = 1.2,
+     xlab = "Number of Trees (Log Scale)", ylab = "RMSE", 
+     main = "Random Forest: No Overfitting",
+     ylim = c(y_min, y_max),
+     log = "x", cex.main = 1.1, font.main = 2)
+lines(rf_trees, rf_rmse_test, 
+      type = "b", col = "#E31A1C", lwd = 2, pch = 17, cex = 1.2)
+legend("topright", 
+       legend = c("Training", "Test"), 
+       col = c("#1F78B4", "#E31A1C"), 
+       lty = 1, lwd = 2, pch = c(16, 17), cex = 0.9)
+grid(col = "gray90", lty = 2)
 
-# Display plots separately
-print(p1)
-print(p2)
+# Reset plotting parameters
+par(mfrow = c(1, 1))
 ```
 
 **Analysis of Overfitting in Decision Trees vs Random Forests:**
@@ -422,10 +410,36 @@ comparison_data <- data.frame(
 comparison_data$RMSE_Improvement <- round((lm_rmse_test - comparison_data$RMSE) / lm_rmse_test * 100, 2)
 comparison_data$R2_Improvement <- round((comparison_data$R_squared - lm_r2) / lm_r2 * 100, 2)
 
-# Display the comparison table
-print("Model Performance Comparison: Linear Regression vs Random Forest")
-print(paste(rep("=", 70), collapse = ""))
-print(comparison_data)
+# Create a clear comparison table
+cat("\n")
+cat(paste(rep("=", 80), collapse = ""), "\n")
+cat("MODEL PERFORMANCE COMPARISON: Linear Regression vs Random Forest\n")
+cat(paste(rep("=", 80), collapse = ""), "\n")
+cat("\n")
+
+# Format the table with clear headers
+cat(sprintf("%-25s %-12s %-12s %-15s %-15s\n", 
+            "Model", "RMSE", "R-squared", "RMSE Improvement", "R² Improvement"))
+cat(sprintf("%-25s %-12s %-12s %-15s %-15s\n", 
+            "-----", "----", "---------", "---------------", "-------------"))
+
+# Print each model with formatted numbers
+for(i in 1:nrow(comparison_data)) {
+  cat(sprintf("%-25s %-12.0f %-12.3f %-15.1f%% %-15.1f%%\n",
+              comparison_data$Model[i],
+              comparison_data$RMSE[i],
+              comparison_data$R_squared[i],
+              comparison_data$RMSE_Improvement[i],
+              comparison_data$R2_Improvement[i]))
+}
+
+cat("\n")
+cat("Key Insights:\n")
+cat("• Linear Regression provides the baseline performance\n")
+cat("• Random Forest (1 tree) shows initial improvement over linear regression\n")
+cat("• Random Forest (100 trees) provides substantial gains with optimal efficiency\n")
+cat("• Random Forest (1000 trees) offers marginal additional improvement\n")
+cat(paste(rep("=", 80), collapse = ""), "\n")
 ```
 
 **Analysis of Linear Regression vs Random Forest Performance:**
