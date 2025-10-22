@@ -244,15 +244,9 @@ print(p1)
 print(p2)
 ```
 
-**Analysis of the Power of More Trees:**
+**Analysis:**
 
-The visualization reveals several key insights about ensemble learning:
-
-**Dramatic Early Improvements:** The most significant performance gains occur in the first 25-100 trees. Moving from 1 tree to 25 trees shows a dramatic reduction in RMSE (approximately 15-20% improvement) and substantial increase in R-squared. This demonstrates the core principle of ensemble learning - combining multiple weak learners creates a much stronger predictor.
-
-**Diminishing Returns:** Beyond 100 trees, the improvements become increasingly marginal. The gap between training and test RMSE remains relatively stable, indicating that random forests don't suffer from the overfitting problems that plague individual decision trees. While adding more trees continues to provide small improvements, the computational cost increases significantly for minimal gains.
-
-**Practical Implications:** For most real-world applications, 100-500 trees provide the optimal balance between performance and computational efficiency. The visualization clearly shows that the "sweet spot" for this dataset is around 100-500 trees, where we achieve most of the performance benefits without excessive computational overhead.
+The plots show that random forest performance improves dramatically in the first 25-100 trees, then levels off with diminishing returns. Beyond 100 trees, each additional tree provides smaller benefits. For this dataset, around 100-500 trees seems to be the sweet spot for performance without wasting computational resources.
 
 ### 2. Overfitting Visualization and Analysis
 
@@ -357,21 +351,9 @@ grid(col = "gray90", lty = 2)
 par(mfrow = c(1, 1))
 ```
 
-**Analysis of Overfitting in Decision Trees vs Random Forests:**
+**Analysis:**
 
-The side-by-side comparison reveals fundamental differences in how these two approaches handle complexity:
-
-**Decision Trees and Overfitting:** As the max depth increases, we observe a classic overfitting pattern. The training RMSE continues to decrease (the model memorizes the training data), while the test RMSE starts to increase after depth 5. This gap between training and test performance is the hallmark of overfitting - the model becomes too complex and loses its ability to generalize to new data.
-
-**Random Forests and the Overfitting Solution:** In stark contrast, random forests show no overfitting behavior. Both training and test RMSE improve together as more trees are added, with the gap remaining relatively constant. This demonstrates the power of ensemble methods to prevent overfitting through several key mechanisms:
-
-1. **Bootstrap Sampling:** Each tree is trained on a different random sample of the data, preventing any single tree from memorizing the entire training set.
-
-2. **Random Feature Selection:** Each split considers only a random subset of features, reducing the chance that any single tree becomes overly specialized to the training data.
-
-3. **Averaging Predictions:** The final prediction is the average of many diverse trees, which smooths out individual tree errors and reduces variance.
-
-**Practical Implications:** This visualization clearly demonstrates why random forests are preferred over individual decision trees for real-world applications. While decision trees can achieve very low training error, they sacrifice generalization ability. Random forests maintain both high performance and good generalization, making them the superior choice for most predictive modeling tasks.
+The left plot shows decision trees overfitting - training RMSE drops but test RMSE increases after depth 5. The right plot shows random forests don't have this problem - both training and test RMSE improve together. Random forests prevent overfitting through bootstrap sampling, random feature selection, and prediction averaging.
 
 ### 3. Linear Regression vs Random Forest Comparison
 
@@ -407,6 +389,8 @@ comparison_data <- data.frame(
 )
 
 # Calculate percentage improvements over linear regression
+# For RMSE: lower is better, so improvement = (baseline - new) / baseline * 100
+# For R-squared: higher is better, so improvement = (new - baseline) / baseline * 100
 comparison_data$RMSE_Improvement <- round((lm_rmse_test - comparison_data$RMSE) / lm_rmse_test * 100, 2)
 comparison_data$R2_Improvement <- round((comparison_data$R_squared - lm_r2) / lm_r2 * 100, 2)
 
@@ -439,34 +423,15 @@ cat("• Linear Regression provides the baseline performance\n")
 cat("• Random Forest (1 tree) shows initial improvement over linear regression\n")
 cat("• Random Forest (100 trees) provides substantial gains with optimal efficiency\n")
 cat("• Random Forest (1000 trees) offers marginal additional improvement\n")
+cat("\n")
+cat("Note: Positive percentages indicate improvement over linear regression\n")
+cat("      (Lower RMSE = better, Higher R-squared = better)\n")
 cat(paste(rep("=", 80), collapse = ""), "\n")
 ```
 
-**Analysis of Linear Regression vs Random Forest Performance:**
+**Analysis:**
 
-The comparison reveals significant insights about the trade-offs between simplicity and performance:
-
-**Performance Improvements:** The transition from linear regression to random forests shows substantial gains. Moving from linear regression to a 100-tree random forest reduces RMSE by approximately 15-20% and increases R-squared by 25-30%. This improvement is comparable to the gains achieved by adding more trees to the random forest itself.
-
-**The Complexity-Performance Trade-off:** The most dramatic improvement occurs when switching from linear regression to any random forest model. Adding more trees (1 → 100 → 1000) provides diminishing returns compared to the initial leap from linear regression to ensemble methods.
-
-**When Random Forests Are Worth the Complexity:**
-
-**Choose Random Forests when:**
-- **Non-linear relationships exist:** Real estate prices have complex interactions between features (e.g., square footage matters differently in different neighborhoods)
-- **Feature interactions are important:** The relationship between bedrooms and price depends on total square footage
-- **Performance is critical:** The 15-20% RMSE improvement translates to thousands of dollars in prediction accuracy
-- **Computational resources allow:** Random forests require more processing power and time
-
-**Choose Linear Regression when:**
-- **Interpretability is paramount:** Linear regression coefficients provide clear, actionable insights
-- **Computational constraints exist:** Linear regression is much faster to train and predict
-- **Linear relationships dominate:** When feature interactions are minimal and relationships are straightforward
-- **Baseline modeling:** As a starting point before exploring more complex methods
-
-**Practical Implications:** For this housing dataset, random forests clearly outperform linear regression, suggesting that the relationships between features and price are indeed non-linear and complex. The 15-20% improvement in RMSE represents a meaningful business value - for a $300,000 house, this translates to roughly $45,000-60,000 in prediction accuracy improvement.
-
-**The Sweet Spot:** A 100-tree random forest provides the optimal balance, achieving 90% of the performance gains of a 1000-tree forest while being 10x faster to train and predict. This makes it the practical choice for most real-world applications.
+Linear regression holds its own against random forests for this dataset, which is surprising. This makes sense because the Iowa housing data is pretty homogeneous, so linear relationships capture most of the patterns. Random forests are worth the complexity when you have non-linear relationships, but for linear data, simple linear regression might be better.
 
 ## Challenge Requirements 📋
 
